@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Checker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">C</div>
+          <div>
+            <p class="eyebrow">Python Playground</p>
+            <h1>Code Checker</h1>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-grid">
+        <section class="panel editor-panel">
+          <div class="panel-header">
+            <h2>Python Editor</h2>
+            <span id="statusBadge" class="status-badge neutral">Ready</span>
+          </div>
+
+          <textarea id="codeInput" spellcheck="false" aria-label="Python code editor">print("Welcome to Code Checker!")
+name = "Developer"
+print(f"Hello, {name}!")
+
+for i in range(1, 6):
+    print(i)
+</textarea>
+
+          <div class="actions">
+            <button id="runBtn" class="primary-btn">Run Code</button>
+            <button id="clearBtn" class="secondary-btn" type="button">Clear</button>
+            <button id="downloadBtn" class="accent-btn" type="button">Download PDF</button>
+          </div>
+        </section>
+
+        <section class="panel output-panel">
+          <div class="panel-header">
+            <h2>Output</h2>
+          </div>
+          <pre id="outputBox" class="output-box">Your program output will appear here.</pre>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
