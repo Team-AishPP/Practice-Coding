@@ -29,7 +29,8 @@ body {
 }
 
 button,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -93,12 +94,40 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
+}
+
+.editor-header-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .panel-header h2 {
   margin: 0;
   font-size: 1.2rem;
+}
+
+.language-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.language-picker select {
+  background: #091725;
+  color: var(--text);
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 8px;
+  padding: 7px 10px;
 }
 
 .history-count {
@@ -240,6 +269,17 @@ button:active {
   line-height: 1.7;
   font-family: "Consolas", "Monaco", monospace;
   color: #d9efff;
+}
+
+.output-box.html-output {
+  white-space: normal;
+  font-family: "Inter", sans-serif;
+  color: var(--text);
+  background: #0a1524;
+}
+
+.output-box.html-output * {
+  max-width: 100%;
 }
 
 @media (max-width: 900px) {
