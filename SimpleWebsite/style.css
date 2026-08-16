@@ -101,6 +101,19 @@ h1 {
   font-size: 1.2rem;
 }
 
+.history-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.25);
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -200,6 +213,16 @@ button:active {
 
 .accent-btn {
   background: linear-gradient(135deg, #f472b6, #c084fc);
+  color: white;
+}
+
+.info-btn {
+  background: linear-gradient(135deg, #38bdf8, #10b981);
+  color: white;
+}
+
+.danger-btn {
+  background: linear-gradient(135deg, #f87171, #ef4444);
   color: white;
 }
 
