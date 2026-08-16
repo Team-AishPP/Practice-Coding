@@ -43,12 +43,15 @@ for i in range(1, 6):
             <button id="runBtn" class="primary-btn">Run Code</button>
             <button id="clearBtn" class="secondary-btn" type="button">Clear</button>
             <button id="downloadBtn" class="accent-btn" type="button">Download PDF</button>
+            <button id="downloadTxtBtn" class="info-btn" type="button">Save as TXT</button>
+            <button id="clearHistoryBtn" class="danger-btn" type="button">Clear Session History</button>
           </div>
         </section>
 
         <section class="panel output-panel">
           <div class="panel-header">
             <h2>Output</h2>
+            <span id="historyCount" class="history-count">Runs: 0</span>
           </div>
           <pre id="outputBox" class="output-box">Your program output will appear here.</pre>
         </section>
