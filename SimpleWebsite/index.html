@@ -18,7 +18,7 @@
         <div class="brand-wrap">
           <div class="brand-mark">C</div>
           <div>
-            <p class="eyebrow">Python Playground</p>
+            <p id="languageEyebrow" class="eyebrow">Python Playground</p>
             <h1>Code Checker</h1>
           </div>
         </div>
@@ -27,11 +27,29 @@
       <main class="app-grid">
         <section class="panel editor-panel">
           <div class="panel-header">
-            <h2>Python Editor</h2>
+            <div class="editor-header-group">
+              <h2 id="editorTitle">Python Editor</h2>
+              <label class="language-picker" for="languageSelect">
+                <span>Language</span>
+                <select id="languageSelect" aria-label="Select programming language">
+                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="html">HTML</option>
+                  <option value="c">C</option>
+                  <option value="cpp">C++</option>
+                  <option value="java">Java</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="ruby">Ruby</option>
+                  <option value="php">PHP</option>
+                  <option value="go">Go</option>
+                  <option value="csharp">C#</option>
+                </select>
+              </label>
+            </div>
             <span id="statusBadge" class="status-badge neutral">Ready</span>
           </div>
 
-          <textarea id="codeInput" spellcheck="false" aria-label="Python code editor">print("Welcome to Code Checker!")
+          <textarea id="codeInput" spellcheck="false" aria-label="Code editor">print("Welcome to Code Checker!")
 name = "Developer"
 print(f"Hello, {name}!")
 

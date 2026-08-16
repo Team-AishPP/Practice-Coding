@@ -7,6 +7,246 @@ const downloadTxtBtn = document.getElementById("downloadTxtBtn");
 const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 const statusBadge = document.getElementById("statusBadge");
 const historyCount = document.getElementById("historyCount");
+const languageSelect = document.getElementById("languageSelect");
+const languageEyebrow = document.getElementById("languageEyebrow");
+const editorTitle = document.getElementById("editorTitle");
+
+const languageConfig = {
+  python: {
+    label: "Python",
+    eyebrow: "Python Playground",
+    title: "Python Editor",
+    starter: `print("Welcome to Code Checker!")
+name = "Developer"
+print(f"Hello, {name}!")
+
+for i in range(1, 6):
+    print(i)
+`,
+    run: async function runPythonCode(code) {
+      if (!window.loadPyodide) {
+        throw new Error("Python engine is not available in this browser.");
+      }
+
+      if (!pyodideReady || !pyodideInstance) {
+        pyodideInstance = await window.loadPyodide({
+          indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
+        });
+        pyodideReady = true;
+      }
+
+      pyodideInstance.globals.set("user_code", code);
+      const result = await pyodideInstance.runPythonAsync(`
+import io
+import sys
+import traceback
+
+stdout = io.StringIO()
+stderr = io.StringIO()
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+
+sys.stdout = stdout
+sys.stderr = stderr
+
+try:
+    exec(compile(user_code, "<user_code>", "exec"), {})
+except Exception:
+    traceback.print_exc()
+finally:
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+
+output = stdout.getvalue() + stderr.getvalue()
+output
+`);
+
+      return result || "Program executed successfully with no output.";
+    },
+  },
+  javascript: {
+    label: "JavaScript",
+    eyebrow: "JavaScript Playground",
+    title: "JavaScript Editor",
+    starter: `console.log("Welcome to Code Checker!");
+const name = "Developer";
+console.log("Hello, " + name + "!");
+
+for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}
+`,
+    run: function runJavaScriptCode(code) {
+      const logMessages = [];
+      const consoleProxy = {
+        log: (...args) => logMessages.push(args.join(" ")),
+        error: (...args) => logMessages.push(args.join(" ")),
+      };
+
+      const script = new Function("console", code);
+      script(consoleProxy);
+      return logMessages.length ? logMessages.join("\n") : "JavaScript executed successfully with no output.";
+    },
+  },
+  html: {
+    label: "HTML",
+    eyebrow: "HTML Preview",
+    title: "HTML Editor",
+    starter: `<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Hello from HTML!</h1>
+    <p>This is rendered in the preview panel.</p>
+  </body>
+</html>
+`,
+    run: function runHtmlCode(code) {
+      outputBox.classList.add("html-output");
+      outputBox.innerHTML = code;
+      return "HTML preview rendered in the output panel.";
+    },
+  },
+  c: {
+    label: "C",
+    eyebrow: "C Playground",
+    title: "C Editor",
+    starter: `#include <stdio.h>
+
+int main() {
+    printf("Welcome to Code Checker!\\n");
+    printf("Hello, Developer!\\n");
+    for (int i = 1; i <= 5; i++) {
+        printf("%d\\n", i);
+    }
+    return 0;
+}
+`,
+    run: function runUnsupportedLanguage() {
+      return "C execution is not available in the browser on this page. Use a local compiler or another online sandbox for C code.";
+    },
+  },
+  cpp: {
+    label: "C++",
+    eyebrow: "C++ Playground",
+    title: "C++ Editor",
+    starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Welcome to Code Checker!" << endl;
+    cout << "Hello, Developer!" << endl;
+    for (int i = 1; i <= 5; i++) {
+        cout << i << endl;
+    }
+    return 0;
+}
+`,
+    run: function runUnsupportedLanguage() {
+      return "C++ execution is not available in the browser on this page. Use a local compiler or another online sandbox for C++ code.";
+    },
+  },
+  java: {
+    label: "Java",
+    eyebrow: "Java Playground",
+    title: "Java Editor",
+    starter: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Welcome to Code Checker!");
+        System.out.println("Hello, Developer!");
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(i);
+        }
+    }
+}
+`,
+    run: function runUnsupportedLanguage() {
+      return "Java execution is not available in the browser on this page. Use a local JDK or another online compiler for Java code.";
+    },
+  },
+  typescript: {
+    label: "TypeScript",
+    eyebrow: "TypeScript Playground",
+    title: "TypeScript Editor",
+    starter: "const name: string = \"Developer\";\nconsole.log(\"Welcome to Code Checker!\");\nconsole.log(`Hello, ${name}!`);\n\nfor (let i = 1; i <= 5; i++) {\n  console.log(i);\n}\n",
+    run: function runUnsupportedLanguage() {
+      return "TypeScript is not directly executable in the browser without transpilation. Paste the generated JavaScript or use a TypeScript compiler for execution.";
+    },
+  },
+  ruby: {
+    label: "Ruby",
+    eyebrow: "Ruby Playground",
+    title: "Ruby Editor",
+    starter: `puts "Welcome to Code Checker!"
+name = "Developer"
+puts "Hello, #{name}!"
+
+(1..5).each do |i|
+  puts i
+end
+`,
+    run: function runUnsupportedLanguage() {
+      return "Ruby execution is not available in the browser on this page. Use a Ruby runtime on your system or another online interpreter.";
+    },
+  },
+  php: {
+    label: "PHP",
+    eyebrow: "PHP Playground",
+    title: "PHP Editor",
+    starter: `<?php
+  echo "Welcome to Code Checker!\n";
+  $name = "Developer";
+  echo "Hello, $name!\n";
+
+  for ($i = 1; $i <= 5; $i++) {
+      echo $i . "\n";
+  }
+?>
+`,
+    run: function runUnsupportedLanguage() {
+      return "PHP execution is not available in the browser on this page. Use a local PHP server or another online PHP sandbox.";
+    },
+  },
+  go: {
+    label: "Go",
+    eyebrow: "Go Playground",
+    title: "Go Editor",
+    starter: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Welcome to Code Checker!")
+    fmt.Println("Hello, Developer!")
+    for i := 1; i <= 5; i++ {
+        fmt.Println(i)
+    }
+}
+`,
+    run: function runUnsupportedLanguage() {
+      return "Go execution is not available in the browser on this page. Use a local Go toolchain or another online Go compiler.";
+    },
+  },
+  csharp: {
+    label: "C#",
+    eyebrow: "C# Playground",
+    title: "C# Editor",
+    starter: `using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Welcome to Code Checker!");
+        Console.WriteLine("Hello, Developer!");
+        for (int i = 1; i <= 5; i++) {
+            Console.WriteLine(i);
+        }
+    }
+}
+`,
+    run: function runUnsupportedLanguage() {
+      return "C# execution is not available in the browser on this page. Use a local .NET SDK or another online C# compiler.";
+    },
+  },
+};
 
 let pyodideReady = false;
 let pyodideInstance = null;
@@ -15,6 +255,29 @@ let sessionHistory = [];
 function setStatus(text, type = "neutral") {
   statusBadge.textContent = text;
   statusBadge.className = `status-badge ${type}`;
+}
+
+function changeLanguage(selectedLanguage) {
+  const config = languageConfig[selectedLanguage] || languageConfig.python;
+
+  languageEyebrow.textContent = config.eyebrow;
+  editorTitle.textContent = config.title;
+  codeInput.setAttribute("aria-label", `${config.label} code editor`);
+
+  if (!codeInput.dataset.language || codeInput.dataset.language !== selectedLanguage) {
+    codeInput.value = config.starter;
+    codeInput.dataset.language = selectedLanguage;
+  }
+
+  if (selectedLanguage === "html") {
+    outputBox.classList.add("html-output");
+    outputBox.innerHTML = codeInput.value;
+  } else {
+    outputBox.classList.remove("html-output");
+    outputBox.textContent = "Your program output will appear here.";
+  }
+
+  setStatus("Ready", "neutral");
 }
 
 function updateHistoryCount() {
@@ -52,72 +315,37 @@ function buildSessionReportText() {
   return lines.join("\n");
 }
 
-async function initializePyodide() {
-  if (pyodideReady && pyodideInstance) {
-    return pyodideInstance;
-  }
-
-  setStatus("Loading Python...", "running");
-
-  try {
-    pyodideInstance = await window.loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
-    });
-    pyodideReady = true;
-    setStatus("Ready", "success");
-    return pyodideInstance;
-  } catch (error) {
-    console.error(error);
-    setStatus("Python failed to load", "error");
-    outputBox.textContent = "Unable to load Python engine. Please refresh the page and try again.";
-    throw error;
-  }
-}
-
-async function runPythonCode() {
+async function runCurrentLanguageCode() {
+  const selectedLanguage = languageSelect.value;
+  const config = languageConfig[selectedLanguage] || languageConfig.python;
   const code = codeInput.value.trim();
 
   if (!code) {
-    outputBox.textContent = "Please enter some Python code first.";
+    outputBox.textContent = `Please enter some ${config.label} code first.`;
     setStatus("No code entered", "error");
     return;
   }
 
   setStatus("Running...", "running");
-  outputBox.textContent = "Executing your Python code...";
+
+  if (selectedLanguage === "html") {
+    outputBox.classList.add("html-output");
+    outputBox.innerHTML = code;
+    recordSessionRun(code, "HTML preview rendered successfully.");
+    setStatus("Execution complete", "success");
+    return;
+  }
+
+  outputBox.classList.remove("html-output");
+  outputBox.textContent = `Executing your ${config.label} code...`;
 
   try {
-    const pyodide = await initializePyodide();
-    pyodide.globals.set("user_code", code);
+    const result = selectedLanguage === "python"
+      ? await languageConfig.python.run(code)
+      : await config.run(code);
 
-    const result = await pyodide.runPythonAsync(`
-import io
-import sys
-import traceback
-
-stdout = io.StringIO()
-stderr = io.StringIO()
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-
-sys.stdout = stdout
-sys.stderr = stderr
-
-try:
-    exec(compile(user_code, "<user_code>", "exec"), {})
-except Exception:
-    traceback.print_exc()
-finally:
-    sys.stdout = old_stdout
-    sys.stderr = old_stderr
-
-output = stdout.getvalue() + stderr.getvalue()
-output
-`);
-
-    const finalOutput = result || "Program executed successfully with no output.";
-    outputBox.textContent = finalOutput;
-    recordSessionRun(code, finalOutput);
+    outputBox.textContent = result;
+    recordSessionRun(code, result);
     setStatus("Execution complete", "success");
   } catch (error) {
     console.error(error);
@@ -254,14 +482,18 @@ function clearSessionHistory() {
   setStatus("History cleared", "neutral");
 }
 
-runBtn.addEventListener("click", runPythonCode);
+runBtn.addEventListener("click", runCurrentLanguageCode);
 clearBtn.addEventListener("click", clearEditor);
 downloadBtn.addEventListener("click", downloadPdf);
 downloadTxtBtn.addEventListener("click", downloadTxt);
 clearHistoryBtn.addEventListener("click", clearSessionHistory);
+languageSelect.addEventListener("change", (event) => {
+  changeLanguage(event.target.value);
+});
 
 window.addEventListener("load", () => {
-  outputBox.textContent = "Your program output will appear here.";
+  languageSelect.value = "python";
+  changeLanguage("python");
   updateHistoryCount();
   setStatus("Ready", "neutral");
 });
