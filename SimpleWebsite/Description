@@ -1,0 +1,7 @@
+Code Checker is a simple web application designed for writing, running, and testing Python code directly in the browser.
+
+The website allows users to paste Python code into an editor, execute it with a built-in Python runtime, and view the output instantly in a separate output panel. It is useful for beginners who want to test small Python programs quickly without installing a local Python environment.
+
+The interface is clean and beginner-friendly, making it easy to write code, check results, and troubleshoot errors. Users can also download the output as a PDF file for saving or sharing their results.
+
+This project showcases the combination of HTML, CSS, and JavaScript to create a lightweight interactive coding tool for learning and experimentation.
