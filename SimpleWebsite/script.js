@@ -284,10 +284,11 @@ function updateHistoryCount() {
   historyCount.textContent = `Runs: ${sessionHistory.length}`;
 }
 
-function recordSessionRun(code, output) {
+function recordSessionRun(code, output, language = "Unknown") {
   sessionHistory.push({
     code,
     output,
+    language,
     timestamp: new Date().toLocaleString(),
   });
   updateHistoryCount();
@@ -304,6 +305,7 @@ function buildSessionReportText() {
 
   sessionHistory.forEach((entry, index) => {
     lines.push(`Run ${index + 1} - ${entry.timestamp}`);
+    lines.push(`Language: ${entry.language || "Unknown"}`);
     lines.push("Input:");
     lines.push(entry.code || "No code entered.");
     lines.push("Output:");
@@ -331,7 +333,7 @@ async function runCurrentLanguageCode() {
   if (selectedLanguage === "html") {
     outputBox.classList.add("html-output");
     outputBox.innerHTML = code;
-    recordSessionRun(code, "HTML preview rendered successfully.");
+    recordSessionRun(code, "HTML preview rendered successfully.", config.label);
     setStatus("Execution complete", "success");
     return;
   }
@@ -345,13 +347,13 @@ async function runCurrentLanguageCode() {
       : await config.run(code);
 
     outputBox.textContent = result;
-    recordSessionRun(code, result);
+    recordSessionRun(code, result, config.label);
     setStatus("Execution complete", "success");
   } catch (error) {
     console.error(error);
     const errorMessage = `Runtime Error:\n${error}`;
     outputBox.textContent = errorMessage;
-    recordSessionRun(code, errorMessage);
+    recordSessionRun(code, errorMessage, config.label);
     setStatus("Execution failed", "error");
   }
 }
@@ -402,6 +404,13 @@ function downloadPdf() {
     doc.setFontSize(14);
     doc.text(sectionTitle, margin, y);
     y += 20;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100, 120, 150);
+    doc.text(`Language: ${entry.language || "Unknown"}`, margin, y);
+    doc.setTextColor(15, 23, 42);
+    y += 16;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
